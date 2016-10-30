@@ -24,8 +24,8 @@ opts.binary_location = chrome_path
 os.environ["webdriver.chrome.driver"] = chromedriver
 driver = webdriver.Chrome(chromedriver,chrome_options = opts)
 #driver.get("https://www.ptt.cc/bbs/Gossiping/index1.html")
-driver.get("https://www.ptt.cc/bbs/Gossiping/index.html")
-
+#driver.get("https://www.ptt.cc/bbs/Gossiping/index.html")
+driver.get("https://www.ptt.cc/bbs/Gossiping/index16651.html")
 
 ## end
 page =0 
@@ -43,17 +43,19 @@ class PTT(unittest.TestCase):
 		push_scores = []
 		looping = True
 		global page
+
 		try:
 			driver.find_element_by_name('yes').click()
 
 		except NoSuchElementException:
-			print 'OK'
+			pass
 		
 
 		while(self.next_page()):
+			## click next page
 			if(page >=1):
-				page_link = driver.find_element_by_xpath("//div[@class='btn-group btn-group-paging']/a[contains(text(),'下頁 ›')]")
-				page_link.click()
+				page_link = driver.find_elements_by_xpath("//div[@class='btn-group btn-group-paging']/a")
+				page_link[2].click()
 
 			div_title = driver.find_elements_by_xpath("//div[@class='title']")
 
@@ -130,12 +132,10 @@ class PTT(unittest.TestCase):
 		self.write_file()
 
 	def next_page(self):
-		
-		try:
-			return driver.find_element_by_xpath("//div[@class='btn-group btn-group-paging']/a[contains(text(),'下頁 ›')]").is_enabled()
 			
-		except NoSuchElementException:
-			return False
+		a_link = driver.find_elements_by_xpath("//div[@class='btn-group btn-group-paging']/a")
+		return a_link[2].get_attribute('href')
+		#print a_link[2].text,a_link[2].get_attribute('href')
 
 	def write_file(self):
 		print 'Writing File ....'
